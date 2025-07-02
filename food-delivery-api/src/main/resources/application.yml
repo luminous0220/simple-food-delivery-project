@@ -1,0 +1,84 @@
+# 服务器配置部分
+server:
+  # 设置应用程序启动的端口号为8080
+  port: 8080
+
+# Spring框架及相关启动配置部分
+spring:
+  # 配置当前激活的Spring Profiles（环境），'dev'表示开发环境（一般有开发dev、测试test、生产prod）
+  # 当配置该字段之后，可以通过使用占位符${...}从更高优先级的配置读取系统环境变量（如：application-dev.yml/properties）
+  profiles:
+    active: dev
+  # Spring Boot主配置项
+  main:
+    # 允许Bean之间的循环引用（解决某些场景下因相互注入导致的启动异常）
+    allow-circular-references: true
+  # 数据源配置部分
+  datasource:
+    # 指定使用Druid数据库连接池
+      # 设置JDBC驱动类名（值从外部配置'foodDelivery.datasource.driver-class-name'获取，通常是com.mysql.cj.jdbc.Driver）
+      driver-class-name: ${foodDelivery.datasource.driver-class-name}
+      # 设置JDBC连接URL（包含数据库地址、端口、库名及连接参数）
+      # ${foodDelivery.datasource.host}等为占位符，从外部配置获取
+      # 参数含义：时区上海、使用Unicode、字符集UTF8、零日期处理为null、禁用SSL（生产应考虑开启）、允许获取公钥
+      url: jdbc:mysql://${foodDelivery.datasource.host}:${foodDelivery.datasource.port}/${foodDelivery.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      # 设置连接数据库的用户名（从外部配置'foodDelivery.datasource.username'获取）
+      username: ${foodDelivery.datasource.username}
+      # 设置连接数据库的密码（从外部配置'foodDelivery.datasource.password'获取）
+      password: ${foodDelivery.datasource.password}
+
+# MyBatis持久层框架配置部分
+mybatis:
+  # 指定MyBatis Mapper映射XML文件的位置（在classpath下的mapper目录中查找）
+  mapper-locations: classpath:mapper/*.xml
+  # 设置MyBatis别名扫描的基础包，该包下的类名会自动注册为SQL映射的别名
+  type-aliases-package: io.github.luminous0220.foodDelivery.entity
+  # MyBatis全局配置项
+  configuration:
+    # 开启自动驼峰命名规则映射（数据库字段名如'some_column'自动映射到Java属性名'someColumn'）
+    map-underscore-to-camel-case: true
+
+# 日志框架配置部分
+logging:
+  # 设置特定包/类的日志级别
+  level:
+    # 包路径io.github.luminous0220.foodDelivery下...
+    io.github.luminous0220:
+      foodDelivery:
+        # mapper包下（通常是数据访问层接口）的日志级别为DEBUG（输出详细SQL等调试信息）
+        mapper: debug
+        # service包下（业务层）的日志级别为INFO（输出重要业务信息）
+        service: info
+        # controller包下（控制器层）的日志级别为INFO（输出接口请求/响应信息）
+        controller: info
+
+knife4j:
+  enable: true
+  openapi:
+    title: Knife4j官方文档
+    description: "`我是测试`,**你知道吗**
+    # aaa"
+    email: xiaoymin@foxmail.com
+    concat: 八一菜刀
+    url: https://docs.xiaominfo.com
+    version: v4.0
+    license: Apache 2.0
+    license-url: https://stackoverflow.com/
+    terms-of-service-url: https://stackoverflow.com/
+    group:
+      default:
+        group-name: 默认分钟
+        api-rule: package
+        api-rule-resources:
+          - io.github.luminous0220.foodDelivery.controller
+
+# 项目自定义配置部分（以'foodDelivery'为前缀）
+food-delivery:
+  # JWT（JSON Web Token）相关配置
+  jwt:
+    # 设置JWT签名加密时使用的密钥（非常重要，需严格保密，'abcdefg'仅为示例，生产环境应用强密钥替换）
+    admin-secret-key: abcdefg2134sadasfsadfsdfsdfabcdefg2134sadasfsadfsdfsdfabcdefg2134sadasfsadfsdfsdfabcdefg2134sadasfsadfsdfsdfabcdefg2134sadasfsadfsdfsdf
+    # 设置JWT的有效期（生存时间），单位：毫秒 (7200000ms = 2小时)
+    admin-ttl: 7200000
+    # 设置前端在HTTP请求中传递令牌（Token）时使用的参数名称（通常放在Header中）
+    admin-token-name: token
