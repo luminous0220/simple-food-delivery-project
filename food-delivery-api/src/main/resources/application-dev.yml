@@ -1,0 +1,8 @@
+foodDelivery:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: 47.109.19.100
+    port: 3306
+    database: food_delivery
+    username: root
+    password: zhan123
